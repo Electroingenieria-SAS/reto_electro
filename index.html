@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="es-CO">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reto Electro · Electroingeniería S.A.S</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800&family=Barlow+Condensed:wght@600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --noche:#07203F;
+  --azul:#0E3A6D;
+  --azul-2:#123f77;
+  --ambar:#FFC20E;
+  --ambar-luz:#FFE49A;
+  --niebla:#E8EDF5;
+  --ok:#35D6A4;
+  --err:#FF5A47;
+  --display:"Barlow Condensed","Arial Narrow",sans-serif;
+  --body:"Archivo","Segoe UI",system-ui,sans-serif;
+  --dato:"IBM Plex Mono","Courier New",monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:var(--body);
+  color:var(--niebla);
+  background:
+    radial-gradient(120% 80% at 50% -10%, #14487f 0%, rgba(20,72,127,0) 60%),
+    linear-gradient(180deg,#07203F 0%,#04162C 100%);
+  background-attachment:fixed;
+  min-height:100%;
+  display:flex;align-items:flex-start;justify-content:center;
+  padding:24px 16px 60px;
+}
+.app{width:100%;max-width:720px}
+.screen{display:none;animation:sube .45s ease both}
+.screen.on{display:block}
+@keyframes sube{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+/* ---------- marca ---------- */
+.marca{display:flex;align-items:center;gap:10px;justify-content:center;margin-bottom:28px}
+.marca .puntos{display:grid;grid-template-columns:repeat(3,5px);gap:3px}
+.marca .puntos i{width:5px;height:5px;border-radius:50%;background:var(--ambar);opacity:.35}
+.marca .puntos i:nth-child(1),.marca .puntos i:nth-child(5),.marca .puntos i:nth-child(9){opacity:1}
+.marca span{font-family:var(--dato);font-size:11px;letter-spacing:.32em;text-transform:uppercase;color:#7FA4CE}
+
+/* ---------- portada ---------- */
+.farola{display:block;margin:0 auto 6px;width:96px;height:auto}
+.haz{fill:var(--ambar);opacity:.16}
+.bombillo{fill:var(--ambar-luz)}
+@media (prefers-reduced-motion:no-preference){
+  .enciende .haz{animation:flick 2.4s ease-in-out .2s both}
+  .enciende .bombillo{animation:flick2 2.4s ease-in-out .2s both}
+}
+@keyframes flick{0%{opacity:0}12%{opacity:.2}18%{opacity:0}26%{opacity:.22}34%{opacity:.05}100%{opacity:.16}}
+@keyframes flick2{0%{opacity:.15}12%{opacity:1}18%{opacity:.2}26%{opacity:1}34%{opacity:.3}100%{opacity:1}}
+
+h1{
+  font-family:var(--display);font-size:clamp(56px,15vw,104px);line-height:.84;
+  text-transform:uppercase;letter-spacing:-.01em;text-align:center;
+  color:#fff;text-wrap:balance;
+}
+h1 em{font-style:normal;color:var(--ambar);display:block}
+.bajada{text-align:center;max-width:44ch;margin:18px auto 0;color:#A9C3E0;font-size:15px;line-height:1.55}
+
+.tarjeta{
+  background:rgba(255,255,255,.045);
+  border:1px solid rgba(255,255,255,.09);
+  border-radius:14px;padding:22px;margin-top:26px;
+  backdrop-filter:blur(6px);
+}
+label{display:block;font-family:var(--dato);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#8FB0D4;margin-bottom:7px}
+.campo+.campo{margin-top:16px}
+input,select{
+  width:100%;padding:13px 14px;font-family:var(--body);font-size:15px;
+  color:#fff;background:rgba(4,22,44,.7);
+  border:1px solid rgba(255,255,255,.16);border-radius:9px;appearance:none;
+}
+select{background-image:linear-gradient(45deg,transparent 50%,#8FB0D4 50%),linear-gradient(135deg,#8FB0D4 50%,transparent 50%);background-position:calc(100% - 20px) 50%,calc(100% - 14px) 50%;background-size:6px 6px;background-repeat:no-repeat}
+input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid var(--ambar);outline-offset:2px}
+option{background:#07203F}
+
+.btn{
+  width:100%;margin-top:22px;padding:16px;border:0;border-radius:9px;cursor:pointer;
+  font-family:var(--display);font-size:22px;letter-spacing:.06em;text-transform:uppercase;
+  background:var(--ambar);color:#07203F;transition:transform .12s ease,box-shadow .2s ease;
+  box-shadow:0 0 0 rgba(255,194,14,0);
+}
+.btn:hover{box-shadow:0 8px 28px rgba(255,194,14,.28);transform:translateY(-1px)}
+.btn:active{transform:translateY(1px)}
+.btn.fantasma{background:transparent;color:var(--ambar);border:1px solid rgba(255,194,14,.45);box-shadow:none}
+.btn.fantasma:hover{background:rgba(255,194,14,.08)}
+.aviso{margin-top:12px;font-size:13px;color:var(--err);min-height:18px}
+.reglas{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:22px}
+.regla{font-family:var(--dato);font-size:11px;letter-spacing:.08em;color:#8FB0D4;border:1px solid rgba(255,255,255,.12);border-radius:999px;padding:6px 12px}
+
+/* ---------- postes de progreso ---------- */
+.postes{display:flex;gap:5px;justify-content:center;margin-bottom:20px}
+.poste{width:100%;max-width:24px;height:26px;position:relative;opacity:.28;transition:opacity .3s}
+.poste::before{content:"";position:absolute;left:50%;bottom:0;width:2px;height:18px;background:#5b7ea6;transform:translateX(-50%)}
+.poste::after{content:"";position:absolute;left:50%;top:0;width:12px;height:5px;border-radius:3px 3px 1px 1px;background:#5b7ea6;transform:translateX(-50%)}
+.poste.on{opacity:1}
+.poste.on::after{background:var(--ambar);box-shadow:0 6px 16px rgba(255,194,14,.55)}
+.poste.on::before{background:#8FB0D4}
+
+/* ---------- juego ---------- */
+.hud{display:flex;justify-content:space-between;align-items:baseline;font-family:var(--dato);font-size:12px;letter-spacing:.1em;color:#8FB0D4;margin-bottom:10px}
+.hud b{color:var(--ambar);font-weight:600}
+.filamento{height:4px;background:rgba(255,255,255,.1);border-radius:99px;overflow:hidden}
+.filamento i{display:block;height:100%;width:100%;background:var(--ambar);box-shadow:0 0 12px var(--ambar);transition:background .3s}
+.filamento i.urgente{background:var(--err);box-shadow:0 0 12px var(--err)}
+.etiqueta{font-family:var(--dato);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--ambar);margin:26px 0 10px}
+.pregunta{font-family:var(--display);font-size:clamp(28px,6.5vw,40px);line-height:1.05;text-transform:uppercase;color:#fff;margin-bottom:22px;text-wrap:balance}
+.opciones{display:grid;gap:10px}
+.op{
+  display:flex;gap:12px;align-items:flex-start;text-align:left;width:100%;
+  padding:15px 16px;border-radius:10px;cursor:pointer;font-size:15px;line-height:1.4;
+  background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.11);color:var(--niebla);
+  font-family:var(--body);transition:background .15s,border-color .15s,transform .1s;
+}
+.op:hover:not(:disabled){background:rgba(255,255,255,.1);border-color:rgba(255,194,14,.5)}
+.op:active:not(:disabled){transform:scale(.99)}
+.op b{font-family:var(--dato);color:var(--ambar);font-weight:600;flex:0 0 auto}
+.op.buena{background:rgba(53,214,164,.16);border-color:var(--ok)}
+.op.buena b{color:var(--ok)}
+.op.mala{background:rgba(255,90,71,.14);border-color:var(--err)}
+.op.mala b{color:var(--err)}
+.op:disabled{cursor:default}
+.explica{margin-top:16px;padding:14px 16px;border-left:3px solid var(--ambar);background:rgba(255,194,14,.07);border-radius:0 8px 8px 0;font-size:14px;line-height:1.5;color:#DCE7F4;display:none}
+.explica.on{display:block;animation:sube .3s ease both}
+.explica strong{display:block;font-family:var(--dato);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--ambar);margin-bottom:5px}
+
+/* ---------- resultado ---------- */
+.medidor{text-align:center;padding:34px 20px;border:1px solid rgba(255,194,14,.3);border-radius:14px;background:rgba(255,194,14,.05)}
+.medidor small{font-family:var(--dato);font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:#8FB0D4}
+.medidor .cifra{font-family:var(--dato);font-weight:600;font-size:clamp(48px,14vw,76px);color:var(--ambar);line-height:1;margin:8px 0 4px;letter-spacing:-.02em}
+.rango{font-family:var(--display);font-size:26px;text-transform:uppercase;color:#fff;letter-spacing:.04em}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+.stat{background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.09);border-radius:10px;padding:14px 10px;text-align:center}
+.stat u{display:block;text-decoration:none;font-family:var(--dato);font-size:22px;color:#fff}
+.stat span{font-family:var(--dato);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#8FB0D4}
+
+/* ---------- ranking ---------- */
+.tabs{display:flex;gap:6px;margin:20px 0 14px}
+.tab{flex:1;padding:11px;border-radius:8px;border:1px solid rgba(255,255,255,.12);background:transparent;color:#8FB0D4;font-family:var(--dato);font-size:11px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer}
+.tab.on{background:var(--ambar);color:#07203F;border-color:var(--ambar)}
+.fila{display:grid;grid-template-columns:34px 1fr auto;gap:12px;align-items:center;padding:13px 14px;border-radius:10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);margin-bottom:7px}
+.fila.yo{border-color:var(--ambar);background:rgba(255,194,14,.09)}
+.pos{font-family:var(--dato);font-size:15px;color:#8FB0D4;text-align:center}
+.fila:nth-child(1) .pos,.fila:nth-child(2) .pos,.fila:nth-child(3) .pos{color:var(--ambar)}
+.quien{font-size:14px;color:#fff;line-height:1.3}
+.quien small{display:block;font-family:var(--dato);font-size:10.5px;letter-spacing:.06em;color:#8FB0D4;margin-top:3px;text-transform:uppercase}
+.pts{font-family:var(--dato);font-size:16px;color:var(--ambar)}
+.vacio{text-align:center;padding:34px 16px;color:#8FB0D4;font-size:14px;line-height:1.6}
+.pie{margin-top:22px;text-align:center;font-family:var(--dato);font-size:10.5px;letter-spacing:.12em;color:#5B7EA6;text-transform:uppercase}
+.pie button{background:none;border:0;color:#5B7EA6;font:inherit;text-transform:inherit;letter-spacing:inherit;cursor:pointer;text-decoration:underline}
+@media(max-width:420px){.stats{grid-template-columns:1fr 1fr}.stat:last-child{grid-column:span 2}}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ============ PORTADA ============ -->
+<section class="screen on" id="s-inicio">
+  <div class="marca"><div class="puntos"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><span>Electroingeniería S.A.S</span></div>
+
+  <svg class="farola enciende" viewBox="0 0 120 150" aria-hidden="true">
+    <polygon class="haz" points="60,26 116,150 4,150"/>
+    <path d="M60 20 h34 a6 6 0 0 1 6 6 v96" stroke="#5B7EA6" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <rect class="bombillo" x="40" y="14" width="40" height="12" rx="5"/>
+  </svg>
+
+  <h1>Reto<em>Electro</em></h1>
+  <p class="bajada">Diez preguntas. Quince segundos cada una. Entre más rápido respondas bien, más puntos suma tu área.</p>
+
+  <div class="reglas">
+    <span class="regla">10 PREGUNTAS</span>
+    <span class="regla">15 SEG C/U</span>
+    <span class="regla">PUNTOS × VELOCIDAD</span>
+  </div>
+
+  <div class="tarjeta">
+    <div class="campo">
+      <label for="f-nombre">Tu nombre</label>
+      <input id="f-nombre" type="text" maxlength="42" placeholder="Nombre y apellido" autocomplete="name">
+    </div>
+    <div class="campo">
+      <label for="f-area">Tu área</label>
+      <select id="f-area"><option value="">Selecciona tu área</option></select>
+    </div>
+    <div class="campo" id="caja-sub" hidden>
+      <label for="f-sub">Tu sub-área</label>
+      <select id="f-sub"></select>
+    </div>
+    <p class="aviso" id="aviso"></p>
+    <button class="btn" id="b-empezar">Encender el reto</button>
+  </div>
+  <p class="pie">El ranking por área se calcula con el promedio, no con el total — así compite igual un área de 3 que una de 53.</p>
+</section>
+
+<!-- ============ JUEGO ============ -->
+<section class="screen" id="s-juego">
+  <div class="postes" id="postes"></div>
+  <div class="hud"><span>PREGUNTA <b id="h-num">1</b>/10</span><span id="h-cat"></span><span>PUNTOS <b id="h-pts">0</b></span></div>
+  <div class="filamento"><i id="h-bar"></i></div>
+  <p class="etiqueta" id="h-seg">15 s</p>
+  <h2 class="pregunta" id="h-preg"></h2>
+  <div class="opciones" id="h-ops"></div>
+  <div class="explica" id="h-exp"></div>
+</section>
+
+<!-- ============ RESULTADO ============ -->
+<section class="screen" id="s-fin">
+  <div class="marca"><div class="puntos"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><span id="f-quien"></span></div>
+  <div class="medidor">
+    <small>Puntaje final</small>
+    <div class="cifra" id="f-pts">0</div>
+    <div class="rango" id="f-rango"></div>
+  </div>
+  <div class="stats">
+    <div class="stat"><u id="f-ac">0/10</u><span>Aciertos</span></div>
+    <div class="stat"><u id="f-vel">0.0s</u><span>Tiempo prom.</span></div>
+    <div class="stat"><u id="f-racha">0</u><span>Mejor racha</span></div>
+  </div>
+  <button class="btn" id="b-ranking">Ver el ranking</button>
+  <button class="btn fantasma" id="b-compartir">Copiar mi resultado</button>
+</section>
+
+<!-- ============ RANKING ============ -->
+<section class="screen" id="s-rank">
+  <h1 style="font-size:clamp(38px,10vw,64px)">Ranking</h1>
+  <div class="tabs">
+    <button class="tab on" data-vista="areas">Por área</button>
+    <button class="tab" data-vista="personas">Individual</button>
+  </div>
+  <div id="lista"></div>
+  <button class="btn fantasma" id="b-otra">Volver al inicio</button>
+  <p class="pie">Organizador: <button id="b-csv">descargar resultados en CSV</button></p>
+</section>
+
+</div>
+<script>
+/* =========================================================
+   CONFIGURACIÓN — llena esto para tener ranking en vivo real
+   ========================================================= */
+const CONFIG = {
+  SUPABASE_URL: "",           // ej: https://xxxx.supabase.co
+  SUPABASE_ANON_KEY: "",      // llave anon (pública)
+  TABLA: "reto_electro"
+};
+
+/* =========================== ORGANIGRAMA =========================== */
+const AREAS = [
+  {n:"Alumbrado Público", h:53, s:["Atención al Usuario","Iluminación","Compras AP","SIG","Logística AP","Medio Ambiente"]},
+  {n:"AOM", h:null, s:[]},
+  {n:"Auditoría", h:3, s:[]},
+  {n:"Calidad", h:3, s:[]},
+  {n:"Contabilidad", h:9, s:[]},
+  {n:"Cumplimiento", h:1, s:[]},
+  {n:"Finanzas", h:7, s:[]},
+  {n:"Gerencia Administrativa", h:1, s:[]},
+  {n:"Gerencia General", h:2, s:[]},
+  {n:"Gerencia Suministros y Proyectos", h:1, s:[]},
+  {n:"Gestión Administrativa", h:15, s:["Servicios Generales","Activos Fijos","Gestión documental","Sistemas","Mantenimiento","Administrativo"]},
+  {n:"Gestión Humana", h:10, s:["Gestión Humana","Seguridad y Salud en el Trabajo","Nómina"]},
+  {n:"Jurídico", h:4, s:[]},
+  {n:"Proyectos", h:31, s:["Proyectos Planeación","Proyectos Ejecución","Proyectos Cierre","Proyectos Administrativo"]},
+  {n:"Suministros", h:21, s:["Compras Suministros","Logística Suministros","Cartera","Ventas"]}
+];
+
+/* =========================== BANCO DE PREGUNTAS =========================== */
+const BANCO = [
+/* --- POLÍTICA DE CALIDAD (M-PO-1 v2) --- */
+{c:"politica",q:"Según la Política de Calidad, ¿cuál es su objetivo?",o:["Asegurar la generación de valor en los productos y servicios ofertados a los clientes y la comunidad","Reducir en 10% los costos operativos cada año","Certificar todos los proyectos antes de entregarlos","Aumentar el número de contratos firmados por trimestre"],r:0,e:"Y ese valor se genera mediante capacitación y formación continua de los equipos de la cadena de valor."},
+{c:"politica",q:"¿A quiénes aplica la Política de Calidad?",o:["Solo al área de Calidad","Solo a los cargos directivos","A todos los trabajadores y partes interesadas que contribuyen al objeto social","Solo a los proyectos de alumbrado público"],r:2,e:"El alcance es total: incluye contratistas, proveedores y cualquier parte interesada de la cadena de valor."},
+{c:"politica",q:"¿Cuál es la versión vigente del documento M-PO-1?",o:["Versión 1","Versión 2","Versión 3","Versión 2, pero de 2023"],r:1,e:"Versión 2, publicada el 22/07/2024. Siempre valida la versión antes de citar un documento del sistema de gestión."},
+{c:"politica",q:"¿Cuál de estas NO es una línea de negocio de Electroingeniería?",o:["Administración de concesiones de alumbrado público","Suministro de materiales eléctricos","Planeación, diseño y ejecución de proyectos de ingeniería","Fabricación de transformadores eléctricos"],r:3,e:"Son tres líneas: concesiones de alumbrado público, suministros eléctricos y proyectos de ingeniería."},
+{c:"politica",q:"La política dice que el mejoramiento continuo debe ser…",o:["Parte integral de la cultura organizacional","Una tarea exclusiva del área de Calidad","Una actividad anual antes de la auditoría","Responsabilidad de la Gerencia General"],r:0,e:"Mejorar no es un evento: es cómo trabajamos todos los días, en todos los procesos."},
+{c:"politica",q:"¿Qué se compromete a aplicar la empresa en su política?",o:["Únicamente la normatividad legal colombiana","La normatividad legal, la normatividad interna y demás regulaciones vigentes","Solo las normas ISO certificadas","Solo los requisitos del cliente"],r:1,e:"Legal, interna y demás regulaciones vigentes. Los procedimientos internos también son de obligatorio cumplimiento."},
+{c:"politica",q:"¿Quién firma la Política de Calidad de Electroingeniería?",o:["El jefe de Calidad","El auditor externo","El Presidente","El líder de cada proceso"],r:2,e:"La firma la Presidencia. Eso es lo que la convierte en un compromiso de la alta dirección, no en un papel del área de Calidad."},
+
+/* --- ORGANIGRAMA --- */
+{c:"organigrama",q:"¿Cuántas sub-áreas tiene Alumbrado Público?",o:["3","4","6","8"],r:2,e:"Seis: Atención al Usuario, Iluminación, Compras AP, SIG, Logística AP y Medio Ambiente."},
+{c:"organigrama",q:"¿Cuál de estas NO es sub-área de Alumbrado Público?",o:["Atención al Usuario","Cartera","SIG","Medio Ambiente"],r:1,e:"Cartera pertenece a Suministros, junto con Compras, Logística y Ventas."},
+{c:"organigrama",q:"Seguridad y Salud en el Trabajo hace parte de…",o:["Gestión Humana","Gestión Administrativa","Calidad","Cumplimiento"],r:0,e:"Gestión Humana agrupa tres sub-áreas: Gestión Humana, SST y Nómina."},
+{c:"organigrama",q:"Si tu computador falla, ¿a qué área pertenece Sistemas?",o:["Proyectos","Gestión Administrativa","Auditoría","Gerencia Administrativa"],r:1,e:"Sistemas está en Gestión Administrativa, junto con Servicios Generales, Activos Fijos, Gestión documental, Mantenimiento y Administrativo."},
+{c:"organigrama",q:"Gestión documental hace parte de…",o:["Calidad","Jurídico","Gestión Administrativa","Cumplimiento"],r:2,e:"Gestión documental está en Gestión Administrativa: es la que custodia la trazabilidad de la información física y digital."},
+{c:"organigrama",q:"¿Cuál de estas NO es sub-área de Proyectos?",o:["Proyectos Planeación","Proyectos Ejecución","Proyectos Comerciales","Proyectos Cierre"],r:2,e:"Proyectos tiene cuatro: Planeación, Ejecución, Cierre y Administrativo. Es el ciclo de vida completo del proyecto."},
+{c:"organigrama",q:"¿Cuál de estas áreas tiene más colaboradores?",o:["Proyectos","Suministros","Alumbrado Público","Contabilidad"],r:2,e:"Alumbrado Público con 53 colaboradores, seguida de Proyectos con 31 y Suministros con 21."},
+{c:"organigrama",q:"¿Dónde está Cartera dentro de la organización?",o:["Contabilidad","Finanzas","Suministros","Jurídico"],r:2,e:"Cartera es sub-área de Suministros, junto a Compras Suministros, Logística Suministros y Ventas."},
+
+/* --- SEGURIDAD DE LA INFORMACIÓN --- */
+{c:"seguridad",q:"¿De qué trata la norma ISO/IEC 27001:2022?",o:["Gestión de la calidad","Seguridad y salud en el trabajo","Gestión de la seguridad de la información","Gestión ambiental"],r:2,e:"Es el estándar del Sistema de Gestión de Seguridad de la Información (SGSI): protege los datos de la empresa y de los clientes."},
+{c:"seguridad",q:"Los tres pilares de la seguridad de la información son…",o:["Confidencialidad, integridad y disponibilidad","Rapidez, ahorro y control","Prevención, corrección y sanción","Antivirus, firewall y respaldo"],r:0,e:"Confidencialidad (solo quien debe la ve), integridad (nadie la altera sin permiso) y disponibilidad (está cuando se necesita)."},
+{c:"seguridad",q:"Te llega un correo urgente pidiendo tu usuario y contraseña. ¿Qué haces?",o:["Respondes rápido para no frenar la operación","Reenvías el correo al grupo del área para preguntar","No haces clic, no respondes y lo reportas a Sistemas","Cambias la contraseña y luego la envías"],r:2,e:"Es phishing hasta que se demuestre lo contrario. Reportar rápido es lo que evita que el incidente escale."},
+
+/* --- MEJORA CONTINUA --- */
+{c:"mejora",q:"En el ciclo PHVA, la V significa…",o:["Validar","Verificar","Vigilar","Valorar"],r:1,e:"Planear, Hacer, Verificar, Actuar. Sin el Verificar, la mejora es solo una intención."},
+{c:"mejora",q:"Una NO CONFORMIDAD es…",o:["Un error humano imposible de evitar","El incumplimiento de un requisito","Una queja de un cliente externo","Un accidente laboral"],r:1,e:"Incumplir un requisito: legal, del cliente, o de nuestros propios procedimientos."},
+{c:"mejora",q:"¿Qué es un KPI?",o:["Un informe mensual de gestión","Un indicador que mide el desempeño frente a una meta definida","Una reunión de seguimiento de proyectos","Un formato del sistema de gestión"],r:1,e:"Sin meta no hay KPI: hay un dato suelto. El indicador sirve para decidir, no para llenar un cuadro."},
+{c:"mejora",q:"Un proceso falla una y otra vez. ¿Cuál es el mejor primer paso?",o:["Documentar el problema con datos y analizar la causa raíz","Llamar la atención a quien lo ejecuta","Aumentar la frecuencia de revisión","Esperar la próxima auditoría"],r:0,e:"Si atacas el síntoma, el problema vuelve. La causa raíz es lo único que corta la reincidencia."},
+{c:"mejora",q:"¿Quién es responsable de la calidad en Electroingeniería?",o:["El área de Calidad","La Gerencia General","Todos los colaboradores, a lo largo de la cadena de valor","El auditor interno"],r:2,e:"La política habla de promover el compromiso de todos frente a los sistemas de gestión. Calidad acompaña; la ejecuta cada quien."}
+];
+
+const MEZCLA = {politica:3, organigrama:3, seguridad:2, mejora:2};
+const TOTAL = 10, SEG = 15;
+
+/* =========================== BACKEND =========================== */
+const Backend = (()=>{
+  const usaSupabase = !!(CONFIG.SUPABASE_URL && CONFIG.SUPABASE_ANON_KEY);
+  const cab = ()=>({ "apikey":CONFIG.SUPABASE_ANON_KEY, "Authorization":"Bearer "+CONFIG.SUPABASE_ANON_KEY, "Content-Type":"application/json" });
+  let memoria = [];
+  const KEY = "reto_electro:registros";
+
+  async function guardar(r){
+    if(usaSupabase){
+      try{
+        await fetch(`${CONFIG.SUPABASE_URL}/rest/v1/${CONFIG.TABLA}`,{method:"POST",headers:{...cab(),Prefer:"return=minimal"},body:JSON.stringify(r)});
+        return;
+      }catch(e){}
+    }
+    if(window.storage){
+      try{
+        let prev=[]; try{ const g=await window.storage.get(KEY,true); prev=g?JSON.parse(g.value):[] ;}catch(e){}
+        prev.push(r); await window.storage.set(KEY,JSON.stringify(prev),true); return;
+      }catch(e){}
+    }
+    memoria.push(r);
+  }
+  async function leer(){
+    if(usaSupabase){
+      try{
+        const res = await fetch(`${CONFIG.SUPABASE_URL}/rest/v1/${CONFIG.TABLA}?select=*&order=puntaje.desc&limit=1000`,{headers:cab()});
+        if(res.ok) return await res.json();
+      }catch(e){}
+    }
+    if(window.storage){
+      try{ const g=await window.storage.get(KEY,true); if(g) return JSON.parse(g.value); }catch(e){}
+    }
+    return memoria;
+  }
+  return {guardar,leer,enVivo:usaSupabase};
+})();
+
+/* =========================== ESTADO =========================== */
+const $ = s=>document.querySelector(s);
+let jugador={}, preguntas=[], i=0, pts=0, aciertos=0, racha=0, mejorRacha=0, tiempos=[], t=null, t0=0, bloqueado=false;
+
+/* =========================== PORTADA =========================== */
+const selArea=$("#f-area"), selSub=$("#f-sub"), cajaSub=$("#caja-sub");
+AREAS.forEach(a=>selArea.insertAdjacentHTML("beforeend",`<option>${a.n}</option>`));
+selArea.addEventListener("change",()=>{
+  const a=AREAS.find(x=>x.n===selArea.value);
+  if(a&&a.s.length){
+    selSub.innerHTML='<option value="">Selecciona tu sub-área</option>'+a.s.map(s=>`<option>${s}</option>`).join("");
+    cajaSub.hidden=false;
+  }else{ cajaSub.hidden=true; selSub.innerHTML=""; }
+});
+
+$("#b-empezar").addEventListener("click",()=>{
+  const nombre=$("#f-nombre").value.trim(), area=selArea.value;
+  if(nombre.length<3) return aviso("Escribe tu nombre completo para aparecer en el ranking.");
+  if(!area) return aviso("Selecciona tu área.");
+  if(!cajaSub.hidden && !selSub.value) return aviso("Selecciona tu sub-área.");
+  jugador={nombre,area,sub:cajaSub.hidden?"":selSub.value};
+  aviso("");
+  preguntas=armarSet();
+  pantalla("s-juego"); pintarPostes(); mostrar();
+});
+function aviso(t){ $("#aviso").textContent=t; }
+function pantalla(id){ document.querySelectorAll(".screen").forEach(s=>s.classList.remove("on")); $("#"+id).classList.add("on"); window.scrollTo({top:0,behavior:"instant"}); }
+const revolver=a=>a.map(v=>[Math.random(),v]).sort((x,y)=>x[0]-y[0]).map(v=>v[1]);
+
+function armarSet(){
+  let set=[];
+  for(const [cat,n] of Object.entries(MEZCLA)) set=set.concat(revolver(BANCO.filter(p=>p.c===cat)).slice(0,n));
+  return revolver(set).map(p=>{
+    const idx=p.o.map((_,k)=>k), mez=revolver(idx);
+    return {...p, o:mez.map(k=>p.o[k]), r:mez.indexOf(p.r)};
+  });
+}
+
+/* =========================== JUEGO =========================== */
+function pintarPostes(){ $("#postes").innerHTML=Array.from({length:TOTAL},()=>'<div class="poste"></div>').join(""); }
+const CAT={politica:"Política de Calidad",organigrama:"Quién es quién",seguridad:"ISO 27001",mejora:"Mejora continua"};
+
+function mostrar(){
+  const p=preguntas[i]; bloqueado=false;
+  $("#h-num").textContent=i+1; $("#h-cat").textContent=CAT[p.c]; $("#h-pts").textContent=pts;
+  $("#h-preg").textContent=p.q;
+  $("#h-exp").classList.remove("on");
+  $("#h-ops").innerHTML=p.o.map((o,k)=>`<button class="op" data-k="${k}"><b>${"ABCD"[k]}</b><span>${o}</span></button>`).join("");
+  $("#h-ops").querySelectorAll(".op").forEach(b=>b.addEventListener("click",()=>responder(+b.dataset.k)));
+  arrancarReloj();
+}
+
+function arrancarReloj(){
+  const bar=$("#h-bar"); bar.classList.remove("urgente"); bar.style.width="100%";
+  t0=performance.now(); clearInterval(t);
+  t=setInterval(()=>{
+    const pasado=(performance.now()-t0)/1000, queda=Math.max(0,SEG-pasado);
+    bar.style.width=(queda/SEG*100)+"%";
+    if(queda<=5) bar.classList.add("urgente");
+    $("#h-seg").textContent=queda.toFixed(1)+" s";
+    if(queda<=0){ clearInterval(t); responder(-1); }
+  },50);
+}
+
+function responder(k){
+  if(bloqueado) return; bloqueado=true; clearInterval(t);
+  const p=preguntas[i], usado=Math.min(SEG,(performance.now()-t0)/1000);
+  tiempos.push(k===-1?SEG:usado);
+  const ok = k===p.r;
+  let gana=0;
+  if(ok){
+    aciertos++; racha++; mejorRacha=Math.max(mejorRacha,racha);
+    gana = Math.round(500 + 500*(1-usado/SEG)) + 100*Math.min(racha-1,5);
+    pts+=gana;
+    $("#postes").children[i].classList.add("on");
+  } else racha=0;
+
+  $("#h-ops").querySelectorAll(".op").forEach(b=>{
+    b.disabled=true; const j=+b.dataset.k;
+    if(j===p.r) b.classList.add("buena");
+    else if(j===k) b.classList.add("mala");
+  });
+  $("#h-pts").textContent=pts;
+  const cab = k===-1 ? "Se acabó el tiempo" : (ok ? `Correcto · +${gana} pts` : "Incorrecto");
+  $("#h-exp").innerHTML=`<strong>${cab}</strong>${p.e}`;
+  $("#h-exp").classList.add("on");
+  setTimeout(()=>{ i++; i<TOTAL ? mostrar() : cerrar(); }, ok?2200:3200);
+}
+
+const RANGOS=[[9000,"Ingeniero de élite"],[7000,"Alta tensión"],[5000,"Buen voltaje"],[3000,"En calibración"],[0,"Necesita mantenimiento"]];
+
+async function cerrar(){
+  const prom=tiempos.reduce((a,b)=>a+b,0)/tiempos.length;
+  $("#f-quien").textContent=jugador.area;
+  $("#f-ac").textContent=aciertos+"/"+TOTAL;
+  $("#f-vel").textContent=prom.toFixed(1)+"s";
+  $("#f-racha").textContent=mejorRacha;
+  $("#f-rango").textContent=RANGOS.find(r=>pts>=r[0])[1];
+  pantalla("s-fin");
+  animarCifra($("#f-pts"),pts);
+  await Backend.guardar({nombre:jugador.nombre,area:jugador.area,subarea:jugador.sub,puntaje:pts,aciertos,tiempo_prom:+prom.toFixed(2),racha:mejorRacha,fecha:new Date().toISOString()});
+}
+
+function animarCifra(el,fin){
+  if(window.matchMedia("(prefers-reduced-motion: reduce)").matches){ el.textContent=fin.toLocaleString("es-CO"); return; }
+  const d=900,s=performance.now();
+  (function paso(n){ const p=Math.min(1,(n-s)/d); el.textContent=Math.round(fin*(1-Math.pow(1-p,3))).toLocaleString("es-CO"); if(p<1) requestAnimationFrame(paso); })(s);
+}
+
+$("#b-compartir").addEventListener("click",async e=>{
+  const txt=`Reto Electro ⚡ ${jugador.nombre} (${jugador.area}): ${pts.toLocaleString("es-CO")} pts · ${aciertos}/${TOTAL} aciertos. ¿Me superas?`;
+  try{ await navigator.clipboard.writeText(txt); e.target.textContent="Copiado ✓"; }
+  catch(err){ e.target.textContent="Copia manual: "+txt.slice(0,40)+"…"; }
+});
+
+/* =========================== RANKING =========================== */
+let VISTA="areas", DATOS=[];
+$("#b-ranking").addEventListener("click",async()=>{ pantalla("s-rank"); $("#lista").innerHTML='<p class="vacio">Cargando resultados…</p>'; DATOS=await Backend.leer(); pintarRanking(); });
+document.querySelectorAll(".tab").forEach(b=>b.addEventListener("click",()=>{
+  document.querySelectorAll(".tab").forEach(x=>x.classList.remove("on")); b.classList.add("on"); VISTA=b.dataset.vista; pintarRanking();
+}));
+$("#b-otra").addEventListener("click",()=>location.reload());
+
+function mejoresPorPersona(rs){
+  const m=new Map();
+  rs.forEach(r=>{ const k=(r.nombre||"").toLowerCase().trim()+"|"+r.area; if(!m.has(k)||m.get(k).puntaje<r.puntaje) m.set(k,r); });
+  return [...m.values()];
+}
+
+function pintarRanking(){
+  const cont=$("#lista");
+  if(!DATOS.length){ cont.innerHTML='<p class="vacio">Todavía no hay resultados registrados.<br>Sé el primero en marcar el ritmo de tu área.</p>'; return; }
+  const base=mejoresPorPersona(DATOS);
+
+  if(VISTA==="personas"){
+    cont.innerHTML=base.sort((a,b)=>b.puntaje-a.puntaje).slice(0,50).map((r,k)=>`
+      <div class="fila ${r.nombre===jugador.nombre&&r.area===jugador.area?"yo":""}">
+        <div class="pos">${k+1}</div>
+        <div class="quien">${esc(r.nombre)}<small>${esc(r.area)}${r.subarea?" · "+esc(r.subarea):""}</small></div>
+        <div class="pts">${(+r.puntaje).toLocaleString("es-CO")}</div>
+      </div>`).join("");
+    return;
+  }
+  const g={};
+  base.forEach(r=>{ (g[r.area]=g[r.area]||[]).push(+r.puntaje); });
+  const filas=Object.entries(g).map(([area,v])=>{
+    const h=(AREAS.find(a=>a.n===area)||{}).h;
+    return {area, prom:Math.round(v.reduce((a,b)=>a+b,0)/v.length), n:v.length, part:h?Math.round(v.length/h*100)+"% participación":v.length+" participantes"};
+  }).sort((a,b)=>b.prom-a.prom);
+  cont.innerHTML=filas.map((f,k)=>`
+    <div class="fila ${f.area===jugador.area?"yo":""}">
+      <div class="pos">${k+1}</div>
+      <div class="quien">${esc(f.area)}<small>${f.n} ${f.n===1?"participante":"participantes"} · ${f.part}</small></div>
+      <div class="pts">${f.prom.toLocaleString("es-CO")}</div>
+    </div>`).join("");
+}
+const esc=s=>String(s).replace(/[<>&"]/g,c=>({"<":"&lt;",">":"&gt;","&":"&amp;",'"':"&quot;"}[c]));
+
+$("#b-csv").addEventListener("click",()=>{
+  if(!DATOS.length) return;
+  const cols=["nombre","area","subarea","puntaje","aciertos","tiempo_prom","racha","fecha"];
+  const csv=[cols.join(";")].concat(DATOS.map(r=>cols.map(c=>`"${(r[c]??"")}"`).join(";"))).join("\n");
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8"}));
+  a.download="reto-electro-resultados.csv"; a.click();
+});
+</script>
+</body>
+</html>
